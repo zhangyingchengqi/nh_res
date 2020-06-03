@@ -26,7 +26,6 @@ public class ResorderBizImpl implements ResorderBiz {
 	 * 事务
 	 */
 	@Override  
-	@Transactional(   rollbackFor=RuntimeException.class )
 	public void completeOrder(Resorder resorder, Map<Integer, CartItem> shopCart) {
 			//1. 插入订单
 		   Resorder orderResult=resorderDao.insertResorder(   resorder );
@@ -42,7 +41,7 @@ public class ResorderBizImpl implements ResorderBiz {
 				   ri.setDealprice(   entry.getValue().getFood().getRealprice()   );
 				   resorderitemDao.insertResorderitem( ri );
 				  
-				   throw new RuntimeException("添加订单详情出问题了，网络抖动...");
+				   //throw new RuntimeException("添加订单详情出问题了，网络抖动...");   //测试....
 				   
 			   }
 		   }
