@@ -1,6 +1,8 @@
 package com.yc.shixun.nhres_2;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -19,7 +21,11 @@ import com.yc.shixun.nhres_2.dao.ResfoodDao;
 import com.yc.shixun.nhres_2.dao.ResorderDao;
 import com.yc.shixun.nhres_2.dao.ResorderitemDao;
 import com.yc.shixun.nhres_2.dao.ResuserDao;
+import com.yc.shixun.nhres_2.service.ResfoodBiz;
+import com.yc.shixun.nhres_2.service.ResorderBiz;
+import com.yc.shixun.nhres_2.service.ResuserBiz;
 import com.yc.shixun.nhres_2.utils.Encrypt;
+import com.yc.shixun.nhres_2.web.entity.CartItem;
 
 import junit.framework.TestCase;
 
@@ -33,6 +39,7 @@ public class AppTest extends TestCase {
 				// DI) 依赖注入.
 	private DataSource dataSource; // 接口, -> DriverManagerDataSource
 
+	//DAO: 测试
 	@Autowired
 	private ResfoodDao resfoodDao;
 	@Autowired
@@ -41,6 +48,65 @@ public class AppTest extends TestCase {
 	private ResorderitemDao resorderitemDao;
 	@Autowired
 	private ResuserDao resuserDao;
+	
+	//业务层测试:
+	@Autowired
+	private ResuserBiz resuserBiz;
+	@Autowired
+	private ResfoodBiz resfoodBiz;
+	@Autowired
+	private ResorderBiz resorderBiz;
+	
+	@Test
+	public void testResorderBiz() {
+		Resorder o=new Resorder();
+		o.setAddress("湖南");
+		o.setPs("快快...");
+		o.setTel("13898989898");
+		o.setUserid(1);
+		
+		int resfoodid=2;
+		
+		Map<Integer, CartItem> shopCart=new HashMap<Integer, CartItem>();
+		Resfood r=new Resfood();
+		r.setFid(    resfoodid  );
+		r.setRealprice(100.0);
+		
+		CartItem ci=new CartItem();
+		ci.setNum(2);
+		ci.setFood(r);
+		shopCart.put(    resfoodid, ci);
+		
+		r=new Resfood();
+		r.setFid(  3    );
+		r.setRealprice(200.0);
+		CartItem ci2=new CartItem();
+		ci2.setNum(1);
+		ci2.setFood(r);
+		
+		shopCart.put( 3,  ci   );
+		
+		resorderBiz.completeOrder(o, shopCart);
+		
+	}
+	
+	@Test
+	public void testResfoodrBiz() {
+		List<Resfood> list=resfoodBiz.findAll();
+		assertEquals(list.size(), 13);
+		for (Resfood rf : list) {
+			System.out.println(rf.getFname());
+		}
+	}
+	
+	@Test
+	public void testResuserBiz() {
+		Resuser u = new Resuser();
+		u.setUsername("a");
+		u.setPwd(   "a"  );
+		Resuser result=resuserBiz.login(   u );
+		assertNotNull(   result );
+	}
 
 	@Test
 	public void testDataSource() {
@@ -91,5 +157,7 @@ public class AppTest extends TestCase {
 		ri.setRoid(1);      //    注意，一定要先操作  testResorderDao  生成一个订单号   后，再执行这个测试
 		resorderitemDao.insertResorderitem(ri);
 	}
+	
+	
 
 }
