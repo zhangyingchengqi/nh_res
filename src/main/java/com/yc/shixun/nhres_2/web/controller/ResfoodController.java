@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yc.shixun.nhres_2.bean.Resfood;
@@ -41,7 +42,7 @@ public class ResfoodController {
 	} 
 	
 	
-	@RequestMapping( "/findAllFoods")
+	@RequestMapping( value="/findAllFoods",method= {RequestMethod.GET,RequestMethod.POST} )
 	public JsonModel findAllFoods( HttpSession session,  JsonModel jm   ) {   //  spring   IOC/DI
 		ServletContext application=session.getServletContext();
 		List<Resfood> list=null;
