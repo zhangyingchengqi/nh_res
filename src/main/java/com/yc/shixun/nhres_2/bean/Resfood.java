@@ -16,6 +16,7 @@ public class Resfood implements Serializable {
 	}
 
 	public void setFid(Integer fid) {
+		System.out.println("*********由spring mvc完成参数的注入*****");
 		this.fid = fid;
 	}
 

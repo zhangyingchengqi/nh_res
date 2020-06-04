@@ -6,6 +6,8 @@ import java.io.Serializable;
  * avro ,   protobuff, 
  */
 public class JsonModel implements Serializable {
+	
+	private static final long serialVersionUID = 4758822739912917035L;
 	private Integer code; // 1: 操作成功 0:操作失败
 	private String msg; // 如果 code=0, 则msg中是错误信息
 	private Object obj; // 存数据
