@@ -27,6 +27,8 @@ public class ResuserController {
 		//退出的核心是将session中保存的loginuser删除
 		if(   session.getAttribute("loginuser")!=null ) {
 			jm.setCode(1);
+			Resuser u=(Resuser)session.getAttribute("loginuser");
+			jm.setObj(u.getUsername());
 		}else {
 			jm.setCode(0);
 		}
@@ -59,7 +61,7 @@ public class ResuserController {
 		try {
 			Resuser user=resuserBiz.login(u);
 			if(   user!=null) {
-				session.setAttribute("loginuser", user);   //保存登录的状态
+				session.setAttribute("loginuser", u);   //保存登录的状态
 				jm.setCode( 1);
 			}
 		}catch( Exception e) {

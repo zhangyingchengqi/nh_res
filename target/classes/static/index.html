@@ -15,7 +15,9 @@
 			小萌神订餐网
 			<div class="right">
 				<span class="showlogin" id="showlogin" v-if="loginbtnflag" @click="showLogin(true)">登录</span> 
-				<span id="exitspan" style="display: none"></span>
+				<span id="exitspan" v-if="userflag">{{username}}  
+				     <span @click="logout()">退出</span>
+				</span>
 			</div>
 		</div>
 		<div class="content">
@@ -122,12 +124,22 @@
 	    		 orderflag:false,     //送货地址div
 	    		 loginflag:false,
 	    		 loginbtnflag:true,   //登录按钮
+	    		 userflag:false,     //用户信息及退出的span
 	    		 username:'',   //如果登录了，则它为用户名
 	    		 pwd:'',
 	    		 valcode:'',
 	    		 foods:{}
 	    	 },
 	    	 methods:{
+	    		 logout:function(){
+	    			 axios.post("logout").then( yc=>{
+	    				 if( yc.data.code==1){
+	    					 this.userflag=false;
+	    					 this.loginbtnflag=true;
+	    					 this.username='';
+	    				 }
+	    			 })
+	    		 },
 	    		 login:function(){
 	    			 //当是post发送时，参数需要包装
 	    			 var params=new URLSearchParams();
@@ -140,6 +152,7 @@
 	    				 }else{
 	    					 this.loginflag=false;
 	    					 this.loginbtnflag=false;
+	    					 this.userflag=true;
 	    				 }
 	    			 }     );
 	    			 
@@ -164,14 +177,23 @@
 	    	 //页面加载完后，调用这个mounted对应的函数
 	    	 mounted:function(){
 	    		 // lambda:   
-	    		axios.all(   [getAllFood()] ).then(  axios.spread(    (d1)=>{
+	    		axios.all(   [getAllFood(),   checkLogin()] ).then(  axios.spread(    (d1,d2)=>{
 	    			d1.data.obj.forEach(   (item,index)=>{
 	    				item.status=false;  //增加一个属性给 food,且值为false
 	    			})
+	    			if( d2.data.code==1){
+	    				this.username=d2.data.obj;
+	    				this.loginbtnflag=false;
+	    				this.userflag=true;
+	    			}
 	    			this.foods=d1.data.obj;     //将服务器返回的json数组绑定到 vm中的一个属性 foods上
 	    		} ))
 	    	 }
 	     });
+	
+		function checkLogin(){
+			return axios.get("checkLogin");
+		}
 	
 	     function getAllFood(){
 	    	 return axios({
