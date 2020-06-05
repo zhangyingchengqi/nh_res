@@ -14,7 +14,8 @@
 		<div class="head">
 			小萌神订餐网
 			<div class="right">
-				<span class="showlogin" id="showlogin" @click="showLogin(true)">登录</span> <span id="exitspan" style="display: none"></span>
+				<span class="showlogin" id="showlogin" v-if="loginbtnflag" @click="showLogin(true)">登录</span> 
+				<span id="exitspan" style="display: none"></span>
 			</div>
 		</div>
 		<div class="content">
@@ -65,25 +66,25 @@
 				<table>
 					<tr>
 						<td class="labname"><label for="username">用户名：</label></td>
-						<td><input type="text" name="username" placeholder="请输入用户名" id="username" /></td>
+						<td><input type="text" name="username" placeholder="请输入用户名" id="username" v-model="username" /></td>
 					</tr>
 					<tr>
 						<td class="labname"><label for="pwd">密码：</label></td>
-						<td><input type="password" name="pwd" placeholder="请输入密码" id="pwd" /></td>
+						<td><input type="password" name="pwd" placeholder="请输入密码" id="pwd" v-model="pwd" /></td>
 					</tr>
 					<tr>
 						<td class="labname"><label for="yzm">验证码：</label></td>
-						<td><input type="text" name="yzm" placeholder="请输入验证码" id="yzm" /></td>
+						<td><input type="text" name="yzm" placeholder="请输入验证码" id="yzm" v-model="valcode" /></td>
 						<td><img src="verifyCodeServlet" id="yzm_img" /></td>
 					</tr>
 				</table>
 			</form>
-			<input type="button" value="login" class="btn" id="btn" />
+			<input type="button" value="login" class="btn" id="btn" @click="login" />
 		</div>
 
 		<!-- 订单信息 -->
 		<div class="login" id="myinfo" v-if="orderflag">
-			<span id="unshowinfo" >X</span>
+			<span id="unshowinfo">X</span>
 			<form name="forminfo">
 				<table>
 					<tr>
@@ -120,10 +121,29 @@
 	    	 data:{
 	    		 orderflag:false,     //送货地址div
 	    		 loginflag:false,
+	    		 loginbtnflag:true,   //登录按钮
 	    		 username:'',   //如果登录了，则它为用户名
+	    		 pwd:'',
+	    		 valcode:'',
 	    		 foods:{}
 	    	 },
 	    	 methods:{
+	    		 login:function(){
+	    			 //当是post发送时，参数需要包装
+	    			 var params=new URLSearchParams();
+	    			 params.append("username",this.username);
+	    			 params.append("pwd",this.pwd);
+	    			 params.append("valcode",this.valcode);
+	    			 axios.post("login",params).then(   yc=>{
+	    				 if(  yc.data.code==0){
+	    					 alert( yc.data.msg);
+	    				 }else{
+	    					 this.loginflag=false;
+	    					 this.loginbtnflag=false;
+	    				 }
+	    			 }     );
+	    			 
+	    		 },
 	    		 showfood:function(  fid  ){
 	    			 //alert("你想显示"+fid);
 	    			 //这个fid对应的层显示，其它隐藏 (  food.status )
