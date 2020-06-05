@@ -23,6 +23,20 @@ public class ResfoodController {
 	@Autowired
 	private ResfoodBiz resfoodBiz;
 	
+	@RequestMapping("/getCartInfo")
+	public JsonModel getCartInfo( HttpSession session, JsonModel jm   ) {   
+		Map<Integer,CartItem>   cart=null;
+		if(session.getAttribute("cart")==null  ) {
+			jm.setCode(0);
+			jm.setMsg("购物车为空");
+			return jm;
+		}
+		cart=(Map<Integer, CartItem>)session.getAttribute("cart");
+		jm.setCode(1);
+		jm.setObj(cart);
+		return jm;
+	}
+	
 	
 	@RequestMapping("/order")
 	public JsonModel order( HttpSession session, Integer fid, Integer num, JsonModel jm   ) {   

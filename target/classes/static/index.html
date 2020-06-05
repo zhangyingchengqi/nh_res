@@ -50,10 +50,14 @@
 					购物车<span id="del">[清空]</span>
 				</p>
 				<table id="bagcontent" cellpadding="0" cellspacing="0">
-
+					<tr   v-for="cartfood in cartfoods">
+					    <td>{{cartfood.food.fname}}</td>
+					    <td>{{cartfood.food.realprice}}</td>
+					    <td>{{cartfood.num}}</td>
+					</tr>
 				</table>
 			</div>
-			<div class="carprice">￥0</div>
+			<div class="carprice"   >￥{{cartprice}}</div>
 			<div class="carinfo">购物车是空的</div>
 		</div>
 		<div class="footer">
@@ -126,7 +130,9 @@
 	    		 username:'',   //如果登录了，则它为用户名
 	    		 pwd:'',
 	    		 valcode:'',
-	    		 foods:{}
+	    		 foods:{},
+	    		 cartprice:0.0,
+	    		 cartfoods:{}   //购物车
 	    	 },
 	    	 methods:{
 	    		 logout:function(){
@@ -175,11 +181,27 @@
 	    					 alert( "添加购物车失败"+yc.data.msg);
 	    				 }else{
 	    					 alert("下订成功");
-	    					 //alert(    yc.data.code+"  "+yc.data.obj);
-	    					 //TODO:  显示到购物车
+	    					 this.showCartInfo();
 	    				 }
 	    			 }     );
 	    			 
+	    		 },
+	    		 showCartInfo:function(){
+	    			 var params=new URLSearchParams();
+	    			axios.post("getCartInfo",params).then(yc=>{
+	    				 //TODO:  显示到购物车
+	    				 if(  yc.data.code==0){
+	    					 alert(   yc.data.msg );
+	    					 return;
+	    				 }
+	    				 this.cartfoods=yc.data.obj;
+	    				 //计算总价
+	    				 this.cartprice=0.0;
+	    				 for (let i in this.cartfoods) {
+	    					    item=this.cartfoods[i];
+	    					    this.cartprice+= item.smallCount;
+	    					}
+	    			}) ;
 	    		 },
 	    		 showLogin:function(  value  ){
 	    			 this.loginflag=value;
