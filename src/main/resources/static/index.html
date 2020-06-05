@@ -14,7 +14,7 @@
 		<div class="head">
 			小萌神订餐网
 			<div class="right">
-				<span class="showlogin" id="showlogin">登录</span> <span id="exitspan" style="display: none"></span>
+				<span class="showlogin" id="showlogin" @click="showLogin(true)">登录</span> <span id="exitspan" style="display: none"></span>
 			</div>
 		</div>
 		<div class="content">
@@ -30,7 +30,7 @@
 							<p>菜品描述：{{food.detail}}</p>
 							<p class="normalprice">原价：￥{{food.normprice}}</p>
 							<p class="realprice">特价：￥{{food.realprice}}</p>
-							<p class="buybtn">加入购物车</p>
+							<p class="buybtn" @click="addCart(  food.fid, 1 )">加入购物车</p>
 						</article>
 					</div>
 				</li>
@@ -60,7 +60,7 @@
 		</div>
 
 		<div class="login" id="login" v-if="loginflag">
-			<span id="unshow">X</span>
+			<span id="unshow" @click="showLogin(false)">X</span>
 			<form name="myform">
 				<table>
 					<tr>
@@ -83,7 +83,7 @@
 
 		<!-- 订单信息 -->
 		<div class="login" id="myinfo" v-if="orderflag">
-			<span id="unshowinfo">X</span>
+			<span id="unshowinfo" >X</span>
 			<form name="forminfo">
 				<table>
 					<tr>
@@ -120,6 +120,7 @@
 	    	 data:{
 	    		 orderflag:false,     //送货地址div
 	    		 loginflag:false,
+	    		 username:'',   //如果登录了，则它为用户名
 	    		 foods:{}
 	    	 },
 	    	 methods:{
@@ -129,6 +130,15 @@
 	    			 this.foods.forEach(   (item, index)=>{
 	    				 item.status=   (fid==item.fid)
 	    			 })
+	    		 },
+	    		 addCart:function(  fid, num   ){   
+	    			 if(   this.username==null|| this.username==""){
+	    				 alert("请先登录")
+	    				 return;
+	    			 }
+	    		 },
+	    		 showLogin:function(  value  ){
+	    			 this.loginflag=value;
 	    		 }
 	    	 },
 	    	 //页面加载完后，调用这个mounted对应的函数
