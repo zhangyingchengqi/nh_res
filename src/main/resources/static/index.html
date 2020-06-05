@@ -14,9 +14,7 @@
 		<div class="head">
 			小萌神订餐网
 			<div class="right">
-				<span class="showlogin" id="showlogin" v-if="loginbtnflag" @click="showLogin(true)">登录</span> 
-				<span id="exitspan" v-if="userflag">{{username}}  
-				     <span @click="logout()">退出</span>
+				<span class="showlogin" id="showlogin" v-if="loginbtnflag" @click="showLogin(true)">登录</span> <span id="exitspan" v-if="userflag">{{username}} <span @click="logout()">退出</span>
 				</span>
 			</div>
 		</div>
@@ -169,6 +167,19 @@
 	    				 alert("请先登录")
 	    				 return;
 	    			 }
+	    			 var params=new URLSearchParams();
+	    			 params.append("fid",fid);
+	    			 params.append("num",num);
+	    			 axios.post("order",params).then(   yc=>{
+	    				 if(  yc.data.code==0){
+	    					 alert( "添加购物车失败"+yc.data.msg);
+	    				 }else{
+	    					 alert("下订成功");
+	    					 //alert(    yc.data.code+"  "+yc.data.obj);
+	    					 //TODO:  显示到购物车
+	    				 }
+	    			 }     );
+	    			 
 	    		 },
 	    		 showLogin:function(  value  ){
 	    			 this.loginflag=value;

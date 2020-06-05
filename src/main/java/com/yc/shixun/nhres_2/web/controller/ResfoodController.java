@@ -1,6 +1,8 @@
 package com.yc.shixun.nhres_2.web.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yc.shixun.nhres_2.bean.Resfood;
 import com.yc.shixun.nhres_2.service.ResfoodBiz;
+import com.yc.shixun.nhres_2.web.entity.CartItem;
 import com.yc.shixun.nhres_2.web.entity.JsonModel;
 
 @RestController    // 1. 这是控制层   2. Rest规范(   支持 GET/POST/DELETE/PUT,   回送数据格式  json)
@@ -19,6 +22,59 @@ public class ResfoodController {
 
 	@Autowired
 	private ResfoodBiz resfoodBiz;
+	
+	
+	@RequestMapping("/order")
+	public JsonModel order( HttpSession session, Integer fid, Integer num, JsonModel jm   ) {   
+		//1. 取出所有的菜  ( ServletContext-> application )
+		ServletContext application=session.getServletContext();
+		List<Resfood> list=null;
+		if(   application.getAttribute("list")!=null) {
+			list=(List<Resfood>)application.getAttribute("list");
+		}else {
+			list=resfoodBiz.findAll();
+		}
+		Resfood toBuy=null;
+		//2. 根据fid到上面找这道菜
+		for( Resfood rf:list) {
+			if(  rf.getFid()==   fid   ) {
+				toBuy=rf;
+				break;
+			}
+		}
+		//3. 如果没有，则返回 code=0
+		if(   toBuy==null) {
+			jm.setCode(0);
+			jm.setMsg("查无此道菜....");
+			return jm;
+		}
+		//4. 如果有, 取出  session中的  购物车Map
+		Map<Integer,CartItem> cart=new HashMap<Integer, CartItem>();
+		//5.   如没有session中没有这个map,创建
+		if(  session.getAttribute("cart")!=null) {
+			cart=(Map<Integer, CartItem>)session.getAttribute("cart");
+		}
+		CartItem ci=null;
+		//6. 查这个map中是否有这个  fid
+		if(cart.containsKey(fid)) {
+			//7. 有，则加数量
+			ci=cart.get(fid);
+			ci.setNum(     ci.getNum()+num );
+		}else {
+			//8. 没有，则新建一个CartItem存入
+			ci=new CartItem();
+			ci.setFood(toBuy);
+			ci.setNum(num);
+		}
+		cart.put(     fid, ci  );
+		//9 .将这个Map存到 session中
+		session.setAttribute("cart", cart);
+		jm.setCode(1);
+		//jm.setObj(cart);
+		return jm;
+	}
+	
+	
 	
 	@RequestMapping( "/findFood")
 	public JsonModel findFood( HttpSession session, Resfood food, JsonModel jm   ) {   

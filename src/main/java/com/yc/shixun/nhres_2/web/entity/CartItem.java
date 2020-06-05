@@ -13,6 +13,13 @@ public class CartItem implements Serializable {
 	private Resfood food;
 	private int num;   //数量
 	private double smallCount;   //小计
+	
+	
+
+	@Override
+	public String toString() {
+		return "CartItem [food=" + food + ", num=" + num + ", smallCount=" + smallCount + "]";
+	}
 
 	public double getSmallCount() {
 		this.smallCount = num * food.getRealprice();
